@@ -73,37 +73,49 @@
 
     // Función para guardar un ticket
     function saveTicket() {
-      const folio = document.getElementById('folio').value;
-      const cliente = document.getElementById('cliente').value;
-      const link = document.getElementById('link').value;
-      const comentarios = document.getElementById('comentarios').value;
+  const folio = document.getElementById('folio').value.trim();
+  const cliente = document.getElementById('cliente').value.trim();
+  const link = document.getElementById('link').value.trim();
+  const comentarios = document.getElementById('comentarios').value.trim();
 
-      if (folio && cliente && link) {
-        const data = { folio, cliente, link, comentarios };
-        fetch(scriptURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.status === 'success') {
-            alert('Ticket guardado exitosamente');
-            document.getElementById('inputForm').reset();
-          } else {
-            alert('Error: ' + result.error);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Error al guardar el ticket');
-        });
-      } else {
-        alert('Por favor, completa los campos obligatorios');
+  if (folio && cliente && link) {
+    const data = { folio, cliente, link, comentarios };
+    const button = document.querySelector('button[onclick="saveTicket()"]');
+    button.disabled = true;
+
+    fetch(scriptURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor: ' + response.status);
       }
-    }
+      return response.json();
+    })
+    .then(result => {
+      if (result.status === 'success') {
+        alert('Ticket guardado exitosamente');
+        document.getElementById('inputForm').reset();
+      } else {
+        alert('Error: ' + (result.error || 'Desconocido'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error al guardar el ticket: ' + error.message);
+    })
+    .finally(() => {
+      button.disabled = false;
+    });
+  } else {
+    alert('Por favor, completa los campos obligatorios');
+  }
+}
+
 
     // Función para buscar un ticket
     function searchTicket() {
