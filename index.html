@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <!-- VERSION DRIVE2 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Tickets</title>
@@ -69,7 +70,7 @@
 
     <script>
     // Reemplaza con la URL de tu script desplegado
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw57JQ-EXU7FP2cdmftsATAlgltCoN8Dyoa3sNQQV8Vdn_wFUVrzBh8RzuaCdz3P1D8rQ/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw2jcBElhTdGl5Du1Df7eWvsTZMYD2dGsNb82J-qiLRXqfIJ4Qd-tRW29fr_3mNW_LHLQ/exec';
 
     // Función para guardar un ticket
     function saveTicket() {
@@ -84,30 +85,28 @@
     button.disabled = true;
 
     fetch(scriptURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
+  method: 'POST',
+  mode: 'no-cors', // Agregar esto
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
     .then(response => {
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor: ' + response.status);
       }
       return response.json();
     })
-    .then(result => {
-      if (result.status === 'success') {
-        alert('Ticket guardado exitosamente');
-        document.getElementById('inputForm').reset();
-      } else {
-        alert('Error: ' + (result.error || 'Desconocido'));
-      }
-    })
+    .then(response => {
+  // No puedes usar response.json() con 'no-cors', solo verificar que se envió
+  alert('Ticket enviado (respuesta no verificable debido a CORS)');
+  document.getElementById('inputForm').reset();
+})
     .catch(error => {
-      console.error('Error:', error);
-      alert('Error al guardar el ticket: ' + error.message);
-    })
+  console.error('Error:', error);
+  alert('Error al guardar el ticket: ' + error.message);
+})
     .finally(() => {
       button.disabled = false;
     });
